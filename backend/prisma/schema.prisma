@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Year {
+  Freshman
+  Sophomore
+  Junior
+  Senior
+}
+
+enum RideStatus {
+  open
+  full
+  cancelled
+}
+
+enum RequestStatus {
+  pending
+  confirmed
+  rejected
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  year      Year
+  avatar    String?
+  venmo     String?  @default("")
+  createdAt DateTime @default(now())
+
+  rides         Ride[]
+  rideRequests  RideRequest[]
+  messages      Message[]
+  conversations ConversationParticipant[]
+}
+
+model Ride {
+  id          String     @id @default(cuid())
+  driverId    String
+  driver      User       @relation(fields: [driverId], references: [id])
+  destination String
+  date        DateTime
+  time        String
+  pickup      String
+  totalSeats  Int
+  price       Float
+  notes       String     @default("")
+  venmo       String     @default("")
+  status      RideStatus @default(open)
+  createdAt   DateTime   @default(now())
+
+  rideRequests  RideRequest[]
+  conversations Conversation[]
+
+  @@index([destination, date, status])
+}
+
+model RideRequest {
+  id        String        @id @default(cuid())
+  rideId    String
+  ride      Ride          @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    RequestStatus @default(confirmed)
+  createdAt DateTime      @default(now())
+
+  @@unique([rideId, userId])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  rideId    String
+  ride      Ride     @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@index([rideId])
+}
+
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  fromUserId     String
+  fromUser       User         @relation(fields: [fromUserId], references: [id])
+  text           String
+  timestamp      DateTime     @default(now())
+
+  @@index([conversationId, timestamp])
+}
