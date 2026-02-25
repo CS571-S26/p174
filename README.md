@@ -11,6 +11,7 @@ Carpooling app for UW Madison students. Post rides, find matches, split costs, a
 
 ```bash
 # Frontend
+cd frontend
 npm install
 npm run dev
 
