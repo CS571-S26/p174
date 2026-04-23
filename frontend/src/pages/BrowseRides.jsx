@@ -54,7 +54,7 @@ export default function BrowseRides({ onRequest }) {
         </h1>
         <p className="text-text-secondary mt-3 text-lg max-w-md mx-auto md:mx-0">Find your ride home for spring break — cheaper than a bus, better than begging your parents.</p>
       </div>
-      <div className="flex flex-col gap-3 mb-8 mt-10 max-w-xl">
+      <div className="flex flex-col gap-3 mb-8 mt-10 max-w-xl mx-auto">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <svg className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
